@@ -3,26 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>switchto.claude — Fix Claude in 60 seconds</title>
-<meta name="description" content="Claude doesn’t know you. Fix that in 60 seconds. Migrate your ChatGPT memory instantly.">
+<title>switchto.claude — AI Migration Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 body{font-family:'DM Mono',monospace;background:#faf9f6;color:#1a1a18;margin:0}
-.container{max-width:720px;margin:0 auto;padding:40px}
-h1{font-family:'Fraunces',serif;font-size:48px;line-height:1.1}
+.container{max-width:820px;margin:0 auto;padding:40px}
+h1{font-family:'Fraunces',serif;font-size:52px;line-height:1.1}
 em{color:#d4521a}
-.upload{border:2px dashed #ddd;padding:40px;text-align:center;border-radius:12px;cursor:pointer}
+.upload{border:2px dashed #ddd;padding:50px;text-align:center;border-radius:12px;cursor:pointer;margin-top:20px}
 button{padding:12px 20px;border:none;border-radius:8px;background:#d4521a;color:#fff;cursor:pointer}
 .section{margin-top:30px}
-.card{border:1px solid #eee;border-radius:10px;padding:20px;background:#fff;margin-bottom:12px}
+.card{border:1px solid #eee;border-radius:10px;padding:20px;background:#fff;margin-bottom:16px}
 pre{white-space:pre-wrap;font-size:12px}
 input{padding:10px;border:1px solid #ccc;border-radius:6px}
+.badge{display:inline-block;padding:4px 10px;background:#eaf3ee;border-radius:20px;font-size:10px;margin-bottom:10px}
 </style>
 </head>
 <body>
 <div class="container">
-<h1>Claude doesn’t know you.<br><em>Fix that in 60 seconds.</em></h1>
-<p>Upload your ChatGPT export → rebuild your memory → paste into Claude.</p>
+<div class="badge">AI Migration Engine</div>
+<h1>Don’t start from zero.<br><em>On any AI.</em></h1>
+<p>Upload ChatGPT export → rebuild your AI memory → use anywhere.</p>
 
 <div class="upload" onclick="fileInput.click()">Drop conversations.json or click</div>
 <input type="file" id="fileInput" style="display:none">
@@ -30,14 +31,15 @@ input{padding:10px;border:1px solid #ccc;border-radius:6px}
 <div id="output" class="section"></div>
 
 <div class="section" id="waitlist" style="display:none">
-<h3>Next: migrate to other AIs</h3>
+<h3>Next: Multi-AI migration</h3>
+<p>ChatGPT → Claude → Gemini → more</p>
 <input id="email" placeholder="Enter email">
-<button onclick="join()">Join</button>
+<button onclick="join()">Join early access</button>
 </div>
 </div>
 
 <script>
-let dataStore={topics:[],prefs:[],memory:[]};
+let dataStore={topics:[],prefs:[],memory:[],messages:0};
 
 document.getElementById('fileInput').addEventListener('change', async e=>{
  const file=e.target.files[0];
@@ -57,9 +59,10 @@ function process(data){
     })
   }
  });
+ dataStore.messages=texts.length;
  dataStore.topics=extractTopics(data);
- dataStore.prefs=texts.slice(0,10);
- dataStore.memory=texts.slice(0,10);
+ dataStore.prefs=extractPrefs(texts);
+ dataStore.memory=texts.slice(0,15);
  render();
 }
 
@@ -71,22 +74,32 @@ function extractTopics(data){
     if(w.length>4){map[w]=(map[w]||0)+1}
   })
  });
- return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>x[0]);
+ return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6).map(x=>x[0]);
+}
+
+function extractPrefs(texts){
+ return texts.slice(0,20).filter(t=>t.length>20).slice(0,6);
 }
 
 function identity(){
- return `AI PROFILE:\n- Focus: ${dataStore.topics.join(', ')}\n- Style: direct, no fluff\n- Type: builder`;
+ return `AI PROFILE:\n- Messages analyzed: ${dataStore.messages}\n- Focus: ${dataStore.topics.join(', ') || 'general'}\n- Style: direct, execution-first\n- Type: builder / problem solver\n- Expectation: no fluff, actionable output`;
 }
 
 function prompt(){
- return `Remember this about me:\n- Focus: ${dataStore.topics.join(', ')}\n- Preferences: direct answers\nConfirm memory.`;
+ return `You are Claude. Save this as memory:\n\nUser profile:\n- Focus: ${dataStore.topics.join(', ')}\n- Style: direct, no fluff\n- Preferences:\n${dataStore.prefs.map(p=>'- '+p).join('\n')}\n\nInstructions:\n- Be concise\n- Give actionable answers\n- Think like a senior collaborator\n\nConfirm memory.`;
 }
 
 function render(){
  const out=document.getElementById('output');
  out.innerHTML=`
  <div class="card"><h3>🧬 Your AI Identity</h3><pre>${identity()}</pre></div>
+ 
+ <div class="card"><h3>⚡ Before vs After</h3>
+ <pre>❌ Before: "How can I help?"\n✅ After: "I know you're focused on ${dataStore.topics[0] || 'your work'}..."</pre>
+ </div>
+ 
  <div class="card"><h3>Claude Prompt</h3><pre>${prompt()}</pre></div>
+ 
  <button onclick="copy()">Copy Prompt</button>
  <button onclick="openClaude()">Open Claude</button>
  `;
@@ -105,7 +118,7 @@ function openClaude(){
 
 function join(){
  const email=document.getElementById('email').value;
- console.log(email);
+ console.log('waitlist:',email);
  alert('You are in');
 }
 </script>
