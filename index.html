@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>switchto.claude — Migrate in 60 seconds</title>
+<title>switchto.claude — AI Migration Tool</title>
 
 <style>
 body {
@@ -44,20 +44,21 @@ h1 {
   margin-top:40px;
 }
 
-button {
+textarea {
+  width:100%;
+  height:200px;
   margin-top:20px;
-  padding:14px 24px;
+}
+
+button {
+  margin-top:15px;
+  padding:12px 18px;
   border:none;
   background:#d4521a;
   color:#fff;
   border-radius:8px;
   cursor:pointer;
-}
-
-textarea {
-  width:100%;
-  height:200px;
-  margin-top:20px;
+  margin-right:10px;
 }
 </style>
 </head>
@@ -67,7 +68,7 @@ textarea {
 <div class="container">
 
 <p style="font-size:12px;letter-spacing:2px;color:#d4521a;text-transform:uppercase">
-ChatGPT → Claude Migration
+ChatGPT → Claude Migration Engine
 </p>
 
 <h1>
@@ -81,7 +82,7 @@ Don’t start from zero.
 </p>
 
 <p style="color:#777">
-Upload your export → rebuild your memory → paste into Claude
+Upload export → rebuild memory → generate Claude prompt
 </p>
 
 <div class="upload" onclick="fileInput.click()">
@@ -92,7 +93,7 @@ Drop <b>conversations.json</b><br>
 <input type="file" id="fileInput" hidden>
 
 <p style="font-size:11px;color:#aaa">
-Runs locally. Your data never leaves your browser.
+Runs locally. Nothing leaves your browser.
 </p>
 
 <!-- BEFORE AFTER -->
@@ -107,57 +108,58 @@ Let’s continue where you left off."
 </p>
 </div>
 
-<textarea id="output" placeholder="Your Claude prompt will appear here..."></textarea>
+<textarea id="output" placeholder="Claude prompt will appear here..."></textarea>
 
 <button onclick="openClaude()">Open in Claude</button>
+<button onclick="generateIdentity()">Generate AI Identity</button>
+<button onclick="downloadPNG()">Download PNG</button>
+<button onclick="shareToX()">Share</button>
+
+<canvas id="canvas" width="800" height="400" style="display:none;"></canvas>
 
 </div>
 
 <script>
+
 let promptText = "";
+let identity = { title:"", style:"", points:[] };
 
 fileInput.onchange = async function(e) {
   const file = e.target.files[0];
   const text = await file.text();
 
   let data = JSON.parse(text);
-
   let messages = [];
-  let count = 0;
 
   for (let c of data) {
     if (c.mapping) {
       for (let node of Object.values(c.mapping)) {
         let msg = node.message;
         if (msg && msg.author.role === "user") {
-          let t = msg.content.parts.join(" ");
-          if (t.length > 20) {
-            messages.push(t);
-            count++;
-          }
+          let t = msg.content.parts?.join(" ") || "";
+          if (t.length > 20) messages.push(t);
         }
       }
     }
   }
 
-  let sample = messages.slice(0, 20).join("\n");
+  let sample = messages.slice(0, 25).join("\n");
 
   promptText = `
 You are Claude.
 
 This user migrated from ChatGPT.
 
-Here are their past queries:
+Past context:
 ${sample}
 
-Understand their style, preferences, and context.
-
-From now on:
+Behavior rules:
 - Be direct
 - Avoid fluff
-- Focus on practical answers
+- Be structured
+- Remember user preferences
 
-Acknowledge what you learned and continue naturally.
+Continue naturally.
 `;
 
   document.getElementById("output").value = promptText;
@@ -167,6 +169,68 @@ function openClaude() {
   const url = "https://claude.ai/new?q=" + encodeURIComponent(promptText);
   window.open(url, "_blank");
 }
+
+/* ---------------- AI IDENTITY ---------------- */
+
+function generateIdentity() {
+  const text = document.getElementById("output").value;
+  if (!text) return alert("Generate prompt first");
+
+  let lines = text.split("\n").filter(l => l.trim());
+
+  identity.title = "AI Migration Profile";
+  identity.style = lines.slice(0,3).join(" ");
+  identity.points = lines.slice(3,8);
+
+  drawCanvas();
+}
+
+function drawCanvas() {
+  const c = document.getElementById("canvas");
+  const ctx = c.getContext("2d");
+
+  ctx.fillStyle = "#faf9f6";
+  ctx.fillRect(0,0,800,400);
+
+  ctx.fillStyle = "#1a1a18";
+  ctx.font = "22px Arial";
+  ctx.fillText("Your AI Identity", 40, 60);
+
+  ctx.font = "14px Arial";
+  ctx.fillText(identity.title, 40, 100);
+
+  ctx.fillText("Style:", 40, 150);
+  ctx.fillText(identity.style.slice(0,90), 40, 180);
+
+  ctx.fillText("Patterns:", 40, 230);
+
+  let y = 260;
+  identity.points.forEach(p => {
+    ctx.fillText("- " + p.slice(0,90), 40, y);
+    y += 25;
+  });
+}
+
+function downloadPNG() {
+  const canvas = document.getElementById("canvas");
+  const a = document.createElement("a");
+  a.download = "ai-identity.png";
+  a.href = canvas.toDataURL();
+  a.click();
+}
+
+function shareToX() {
+  const text = encodeURIComponent(
+`I just migrated my ChatGPT memory into Claude in 60 seconds.
+
+This is my AI Identity.
+
+Try it: your-link-here`
+  );
+
+  window.open("https://twitter.com/intent/tweet?text=" + text, "_blank");
+}
+
 </script>
 
 </body>
