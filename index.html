@@ -3,124 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>switchto.claude — AI Migration Engine</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>switchto.claude — Migrate in 60 seconds</title>
+
 <style>
-body{font-family:'DM Mono',monospace;background:#faf9f6;color:#1a1a18;margin:0}
-.container{max-width:820px;margin:0 auto;padding:40px}
-h1{font-family:'Fraunces',serif;font-size:52px;line-height:1.1}
-em{color:#d4521a}
-.upload{border:2px dashed #ddd;padding:50px;text-align:center;border-radius:12px;cursor:pointer;margin-top:20px}
-button{padding:12px 20px;border:none;border-radius:8px;background:#d4521a;color:#fff;cursor:pointer}
-.section{margin-top:30px}
-.card{border:1px solid #eee;border-radius:10px;padding:20px;background:#fff;margin-bottom:16px}
-pre{white-space:pre-wrap;font-size:12px}
-input{padding:10px;border:1px solid #ccc;border-radius:6px}
-.badge{display:inline-block;padding:4px 10px;background:#eaf3ee;border-radius:20px;font-size:10px;margin-bottom:10px}
+body {
+  font-family: Arial, sans-serif;
+  background:#faf9f6;
+  color:#1a1a18;
+  margin:0;
+}
+
+.container {
+  max-width:720px;
+  margin:auto;
+  padding:60px 20px;
+  text-align:center;
+}
+
+h1 {
+  font-size:52px;
+  line-height:1.1;
+}
+
+.highlight { color:#d4521a; }
+
+.upload {
+  border:2px dashed #ddd;
+  padding:40px;
+  border-radius:12px;
+  margin-top:30px;
+  cursor:pointer;
+}
+
+.box {
+  background:#fff;
+  border:1px solid #eee;
+  padding:20px;
+  border-radius:10px;
+  text-align:left;
+  margin-top:40px;
+}
+
+button {
+  margin-top:20px;
+  padding:14px 24px;
+  border:none;
+  background:#d4521a;
+  color:#fff;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+textarea {
+  width:100%;
+  height:200px;
+  margin-top:20px;
+}
 </style>
 </head>
+
 <body>
+
 <div class="container">
-<div class="badge">AI Migration Engine</div>
-<h1>Don’t start from zero.<br><em>On any AI.</em></h1>
-<p>Upload ChatGPT export → rebuild your AI memory → use anywhere.</p>
 
-<div class="upload" onclick="fileInput.click()">Drop conversations.json or click</div>
-<input type="file" id="fileInput" style="display:none">
+<p style="font-size:12px;letter-spacing:2px;color:#d4521a;text-transform:uppercase">
+ChatGPT → Claude Migration
+</p>
 
-<div id="output" class="section"></div>
+<h1>
+Claude doesn’t know you.<br>
+<span class="highlight">Fix that in 60 seconds.</span>
+</h1>
 
-<div class="section" id="waitlist" style="display:none">
-<h3>Next: Multi-AI migration</h3>
-<p>ChatGPT → Claude → Gemini → more</p>
-<input id="email" placeholder="Enter email">
-<button onclick="join()">Join early access</button>
+<p>
+Switching from ChatGPT?<br>
+Don’t start from zero.
+</p>
+
+<p style="color:#777">
+Upload your export → rebuild your memory → paste into Claude
+</p>
+
+<div class="upload" onclick="fileInput.click()">
+Drop <b>conversations.json</b><br>
+<small>or click to upload</small>
 </div>
+
+<input type="file" id="fileInput" hidden>
+
+<p style="font-size:11px;color:#aaa">
+Runs locally. Your data never leaves your browser.
+</p>
+
+<!-- BEFORE AFTER -->
+<div class="box">
+<p><b>❌ Before</b></p>
+<p style="color:#777">"Hi! How can I help you?"</p>
+
+<p><b>✅ After</b></p>
+<p>
+"I see you're a developer who prefers direct answers and practical solutions.
+Let’s continue where you left off."
+</p>
+</div>
+
+<textarea id="output" placeholder="Your Claude prompt will appear here..."></textarea>
+
+<button onclick="openClaude()">Open in Claude</button>
+
 </div>
 
 <script>
-let dataStore={topics:[],prefs:[],memory:[],messages:0};
+let promptText = "";
 
-document.getElementById('fileInput').addEventListener('change', async e=>{
- const file=e.target.files[0];
- const text=await file.text();
- const data=JSON.parse(text);
- process(data);
-});
+fileInput.onchange = async function(e) {
+  const file = e.target.files[0];
+  const text = await file.text();
 
-function process(data){
- let texts=[];
- data.forEach(c=>{
-  if(c.mapping){
-    Object.values(c.mapping).forEach(n=>{
-      if(n.message && n.message.content?.parts){
-        texts.push(n.message.content.parts.join(' '));
+  let data = JSON.parse(text);
+
+  let messages = [];
+  let count = 0;
+
+  for (let c of data) {
+    if (c.mapping) {
+      for (let node of Object.values(c.mapping)) {
+        let msg = node.message;
+        if (msg && msg.author.role === "user") {
+          let t = msg.content.parts.join(" ");
+          if (t.length > 20) {
+            messages.push(t);
+            count++;
+          }
+        }
       }
-    })
+    }
   }
- });
- dataStore.messages=texts.length;
- dataStore.topics=extractTopics(data);
- dataStore.prefs=extractPrefs(texts);
- dataStore.memory=texts.slice(0,15);
- render();
-}
 
-function extractTopics(data){
- const map={};
- data.forEach(c=>{
-  const t=c.title||'';
-  t.split(' ').forEach(w=>{
-    if(w.length>4){map[w]=(map[w]||0)+1}
-  })
- });
- return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6).map(x=>x[0]);
-}
+  let sample = messages.slice(0, 20).join("\n");
 
-function extractPrefs(texts){
- return texts.slice(0,20).filter(t=>t.length>20).slice(0,6);
-}
+  promptText = `
+You are Claude.
 
-function identity(){
- return `AI PROFILE:\n- Messages analyzed: ${dataStore.messages}\n- Focus: ${dataStore.topics.join(', ') || 'general'}\n- Style: direct, execution-first\n- Type: builder / problem solver\n- Expectation: no fluff, actionable output`;
-}
+This user migrated from ChatGPT.
 
-function prompt(){
- return `You are Claude. Save this as memory:\n\nUser profile:\n- Focus: ${dataStore.topics.join(', ')}\n- Style: direct, no fluff\n- Preferences:\n${dataStore.prefs.map(p=>'- '+p).join('\n')}\n\nInstructions:\n- Be concise\n- Give actionable answers\n- Think like a senior collaborator\n\nConfirm memory.`;
-}
+Here are their past queries:
+${sample}
 
-function render(){
- const out=document.getElementById('output');
- out.innerHTML=`
- <div class="card"><h3>🧬 Your AI Identity</h3><pre>${identity()}</pre></div>
- 
- <div class="card"><h3>⚡ Before vs After</h3>
- <pre>❌ Before: "How can I help?"\n✅ After: "I know you're focused on ${dataStore.topics[0] || 'your work'}..."</pre>
- </div>
- 
- <div class="card"><h3>Claude Prompt</h3><pre>${prompt()}</pre></div>
- 
- <button onclick="copy()">Copy Prompt</button>
- <button onclick="openClaude()">Open Claude</button>
- `;
- document.getElementById('waitlist').style.display='block';
-}
+Understand their style, preferences, and context.
 
-function copy(){
- navigator.clipboard.writeText(prompt());
- alert('Copied');
-}
+From now on:
+- Be direct
+- Avoid fluff
+- Focus on practical answers
 
-function openClaude(){
- navigator.clipboard.writeText(prompt());
- window.open('https://claude.ai','_blank');
-}
+Acknowledge what you learned and continue naturally.
+`;
 
-function join(){
- const email=document.getElementById('email').value;
- console.log('waitlist:',email);
- alert('You are in');
+  document.getElementById("output").value = promptText;
+};
+
+function openClaude() {
+  const url = "https://claude.ai/new?q=" + encodeURIComponent(promptText);
+  window.open(url, "_blank");
 }
 </script>
+
 </body>
 </html>
