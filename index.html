@@ -3,121 +3,208 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>switchto.claude — AI Migration Tool</title>
+<title>AI Migration Engine</title>
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background:#faf9f6;
-  color:#1a1a18;
   margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, Arial;
+  background: radial-gradient(circle at top, #fff7f2, #f7f7fb);
+  color:#111;
 }
 
-.container {
-  max-width:720px;
-  margin:auto;
-  padding:60px 20px;
+/* HERO */
+.hero {
+  max-width:900px;
+  margin:0 auto;
+  padding:100px 20px 60px;
   text-align:center;
 }
 
-h1 {
-  font-size:52px;
-  line-height:1.1;
+.badge {
+  display:inline-block;
+  font-size:12px;
+  letter-spacing:2px;
+  color:#ff4d1a;
+  text-transform:uppercase;
+  margin-bottom:20px;
 }
 
-.highlight { color:#d4521a; }
+h1 {
+  font-size:64px;
+  line-height:1.05;
+  margin-bottom:20px;
+}
 
-.upload {
-  border:2px dashed #ddd;
+.highlight {
+  color:#ff4d1a;
+}
+
+.sub {
+  font-size:20px;
+  color:#444;
+  margin-bottom:10px;
+}
+
+.mini {
+  font-size:14px;
+  color:#777;
+  margin-bottom:40px;
+}
+
+/* CARD */
+.card {
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:16px;
   padding:40px;
-  border-radius:12px;
-  margin-top:30px;
+  max-width:700px;
+  margin:0 auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+}
+
+.drop {
+  border:2px dashed #ddd;
+  padding:50px;
+  border-radius:14px;
   cursor:pointer;
+  transition:0.2s;
+}
+
+.drop:hover {
+  border-color:#ff4d1a;
+  transform:scale(1.01);
+}
+
+/* BEFORE AFTER */
+.split {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  margin-top:30px;
 }
 
 .box {
-  background:#fff;
+  background:#fafafa;
   border:1px solid #eee;
   padding:20px;
-  border-radius:10px;
-  text-align:left;
-  margin-top:40px;
+  border-radius:12px;
 }
 
+.bad {
+  color:#888;
+}
+
+.good {
+  color:#111;
+}
+
+/* BUTTON */
+button {
+  margin-top:20px;
+  padding:14px 22px;
+  border:none;
+  border-radius:10px;
+  background:#ff4d1a;
+  color:white;
+  cursor:pointer;
+  font-weight:600;
+}
+
+button:hover {
+  background:#e63e0f;
+}
+
+/* OUTPUT */
 textarea {
   width:100%;
-  height:200px;
+  height:160px;
   margin-top:20px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  padding:10px;
 }
 
-button {
-  margin-top:15px;
-  padding:12px 18px;
-  border:none;
-  background:#d4521a;
-  color:#fff;
-  border-radius:8px;
-  cursor:pointer;
-  margin-right:10px;
+/* SOCIAL PROOF */
+.proof {
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin-top:60px;
+  color:#666;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="hero">
 
-<p style="font-size:12px;letter-spacing:2px;color:#d4521a;text-transform:uppercase">
-ChatGPT → Claude Migration Engine
-</p>
+  <div class="badge">AI Migration Layer</div>
 
-<h1>
-Claude doesn’t know you.<br>
-<span class="highlight">Fix that in 60 seconds.</span>
-</h1>
+  <h1>
+    Claude doesn’t know you.<br>
+    <span class="highlight">Fix that in 60 seconds.</span>
+  </h1>
 
-<p>
-Switching from ChatGPT?<br>
-Don’t start from zero.
-</p>
+  <p class="sub">
+    The first tool that transfers your ChatGPT memory into Claude.
+  </p>
 
-<p style="color:#777">
-Upload export → rebuild memory → generate Claude prompt
-</p>
+  <p class="mini">
+    Upload → Rebuild → Continue your AI life without reset
+  </p>
 
-<div class="upload" onclick="fileInput.click()">
-Drop <b>conversations.json</b><br>
-<small>or click to upload</small>
+  <div class="card">
+
+    <div class="drop" onclick="fileInput.click()">
+      Drop <b>conversations.json</b><br>
+      <small>or click to upload</small>
+    </div>
+
+    <input type="file" id="fileInput" hidden>
+
+    <p style="font-size:12px;color:#999;margin-top:10px">
+      Runs locally. No upload. No backend.
+    </p>
+
+    <textarea id="output" placeholder="Generated Claude prompt..."></textarea>
+
+    <button onclick="openClaude()">Open in Claude</button>
+    <button onclick="generateIdentity()">Generate AI Identity</button>
+    <button onclick="downloadPNG()">Download Identity</button>
+    <button onclick="share()">Share</button>
+
+  </div>
+
+  <!-- BEFORE AFTER -->
+  <div class="split">
+
+    <div class="box">
+      <h3>❌ Before</h3>
+      <p class="bad">“Hi! How can I help you today?”</p>
+    </div>
+
+    <div class="box">
+      <h3>✅ After</h3>
+      <p class="good">
+        “I see you’re a systems engineer who prefers direct answers.
+        Let’s continue where you left off.”
+      </p>
+    </div>
+
+  </div>
+
+  <div class="proof">
+    <div>⚡ 60s migration</div>
+    <div>🔒 Fully local</div>
+    <div>🧠 Memory reconstruction</div>
+  </div>
+
 </div>
-
-<input type="file" id="fileInput" hidden>
-
-<p style="font-size:11px;color:#aaa">
-Runs locally. Nothing leaves your browser.
-</p>
-
-<!-- BEFORE AFTER -->
-<div class="box">
-<p><b>❌ Before</b></p>
-<p style="color:#777">"Hi! How can I help you?"</p>
-
-<p><b>✅ After</b></p>
-<p>
-"I see you're a developer who prefers direct answers and practical solutions.
-Let’s continue where you left off."
-</p>
-</div>
-
-<textarea id="output" placeholder="Claude prompt will appear here..."></textarea>
-
-<button onclick="openClaude()">Open in Claude</button>
-<button onclick="generateIdentity()">Generate AI Identity</button>
-<button onclick="downloadPNG()">Download PNG</button>
-<button onclick="shareToX()">Share</button>
 
 <canvas id="canvas" width="800" height="400" style="display:none;"></canvas>
-
-</div>
 
 <script>
 
@@ -127,108 +214,102 @@ let identity = { title:"", style:"", points:[] };
 fileInput.onchange = async function(e) {
   const file = e.target.files[0];
   const text = await file.text();
+  const data = JSON.parse(text);
 
-  let data = JSON.parse(text);
   let messages = [];
 
   for (let c of data) {
     if (c.mapping) {
-      for (let node of Object.values(c.mapping)) {
-        let msg = node.message;
-        if (msg && msg.author.role === "user") {
-          let t = msg.content.parts?.join(" ") || "";
+      for (let n of Object.values(c.mapping)) {
+        let m = n.message;
+        if (m?.author?.role === "user") {
+          let t = m.content.parts?.join(" ") || "";
           if (t.length > 20) messages.push(t);
         }
       }
     }
   }
 
-  let sample = messages.slice(0, 25).join("\n");
+  let sample = messages.slice(0,20).join("\n");
 
   promptText = `
 You are Claude.
 
 This user migrated from ChatGPT.
 
-Past context:
+Context:
 ${sample}
 
-Behavior rules:
+Rules:
 - Be direct
-- Avoid fluff
 - Be structured
-- Remember user preferences
-
-Continue naturally.
+- No fluff
+- Remember preferences
 `;
 
   document.getElementById("output").value = promptText;
 };
 
 function openClaude() {
-  const url = "https://claude.ai/new?q=" + encodeURIComponent(promptText);
-  window.open(url, "_blank");
+  window.open("https://claude.ai/new?q=" + encodeURIComponent(promptText), "_blank");
 }
 
-/* ---------------- AI IDENTITY ---------------- */
-
+/* IDENTITY */
 function generateIdentity() {
   const text = document.getElementById("output").value;
-  if (!text) return alert("Generate prompt first");
+  if (!text) return;
 
-  let lines = text.split("\n").filter(l => l.trim());
+  let lines = text.split("\n").filter(Boolean);
 
-  identity.title = "AI Migration Profile";
+  identity.title = "AI Profile";
   identity.style = lines.slice(0,3).join(" ");
   identity.points = lines.slice(3,8);
 
-  drawCanvas();
+  draw();
 }
 
-function drawCanvas() {
+function draw() {
   const c = document.getElementById("canvas");
   const ctx = c.getContext("2d");
 
-  ctx.fillStyle = "#faf9f6";
+  ctx.fillStyle="#fff";
   ctx.fillRect(0,0,800,400);
 
-  ctx.fillStyle = "#1a1a18";
-  ctx.font = "22px Arial";
-  ctx.fillText("Your AI Identity", 40, 60);
+  ctx.fillStyle="#111";
+  ctx.font="22px Arial";
+  ctx.fillText("AI Identity",40,60);
 
-  ctx.font = "14px Arial";
-  ctx.fillText(identity.title, 40, 100);
+  ctx.font="14px Arial";
+  ctx.fillText(identity.title,40,100);
 
-  ctx.fillText("Style:", 40, 150);
-  ctx.fillText(identity.style.slice(0,90), 40, 180);
+  ctx.fillText("Style:",40,150);
+  ctx.fillText(identity.style.slice(0,90),40,180);
 
-  ctx.fillText("Patterns:", 40, 230);
-
-  let y = 260;
-  identity.points.forEach(p => {
-    ctx.fillText("- " + p.slice(0,90), 40, y);
-    y += 25;
+  let y=240;
+  identity.points.forEach(p=>{
+    ctx.fillText("- "+p.slice(0,90),40,y);
+    y+=25;
   });
 }
 
-function downloadPNG() {
-  const canvas = document.getElementById("canvas");
-  const a = document.createElement("a");
-  a.download = "ai-identity.png";
-  a.href = canvas.toDataURL();
+function downloadPNG(){
+  const c=document.getElementById("canvas");
+  const a=document.createElement("a");
+  a.download="identity.png";
+  a.href=c.toDataURL();
   a.click();
 }
 
-function shareToX() {
+function share(){
   const text = encodeURIComponent(
-`I just migrated my ChatGPT memory into Claude in 60 seconds.
+`I migrated my ChatGPT memory into Claude in 60 seconds.
 
-This is my AI Identity.
+It actually works.
 
 Try it: your-link-here`
   );
 
-  window.open("https://twitter.com/intent/tweet?text=" + text, "_blank");
+  window.open("https://twitter.com/intent/tweet?text="+text,"_blank");
 }
 
 </script>
