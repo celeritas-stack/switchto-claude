@@ -5,19 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Migration Engine</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
+
 body {
   margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, Arial;
-  background: radial-gradient(circle at top, #fff7f2, #f7f7fb);
-  color:#111;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background:#0b0b10;
+  color:#fff;
+  overflow-x:hidden;
+}
+
+/* BACKGROUND GLOW */
+.bg {
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,77,26,0.25), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(120,80,255,0.18), transparent 45%),
+    radial-gradient(circle at 50% 80%, rgba(0,200,255,0.12), transparent 50%);
+  filter: blur(40px);
+  z-index:-1;
 }
 
 /* HERO */
 .hero {
   max-width:900px;
   margin:0 auto;
-  padding:100px 20px 60px;
+  padding:120px 20px 60px;
   text-align:center;
 }
 
@@ -27,53 +45,61 @@ body {
   letter-spacing:2px;
   color:#ff4d1a;
   text-transform:uppercase;
-  margin-bottom:20px;
+  margin-bottom:18px;
+  font-weight:600;
 }
 
 h1 {
-  font-size:64px;
+  font-size:72px;
   line-height:1.05;
   margin-bottom:20px;
+  font-weight:700;
 }
 
 .highlight {
-  color:#ff4d1a;
+  background: linear-gradient(90deg,#ff4d1a,#ff7a45);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 
 .sub {
   font-size:20px;
-  color:#444;
+  color:#c7c7d1;
   margin-bottom:10px;
 }
 
 .mini {
   font-size:14px;
-  color:#777;
-  margin-bottom:40px;
+  color:#8a8a9a;
+  margin-bottom:50px;
 }
 
 /* CARD */
 .card {
-  background:#fff;
-  border:1px solid #eee;
-  border-radius:16px;
+  background: rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;
   padding:40px;
-  max-width:700px;
+  max-width:740px;
   margin:0 auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 40px 120px rgba(0,0,0,0.5);
 }
 
+/* DROP */
 .drop {
-  border:2px dashed #ddd;
-  padding:50px;
-  border-radius:14px;
+  border:2px dashed rgba(255,255,255,0.2);
+  padding:60px;
+  border-radius:16px;
   cursor:pointer;
-  transition:0.2s;
+  transition:0.25s ease;
+  background: rgba(255,255,255,0.03);
 }
 
 .drop:hover {
   border-color:#ff4d1a;
-  transform:scale(1.01);
+  transform: translateY(-3px);
+  box-shadow:0 20px 60px rgba(255,77,26,0.15);
 }
 
 /* BEFORE AFTER */
@@ -85,59 +111,87 @@ h1 {
 }
 
 .box {
-  background:#fafafa;
-  border:1px solid #eee;
-  padding:20px;
-  border-radius:12px;
+  background: rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  padding:22px;
+  border-radius:14px;
 }
 
-.bad {
-  color:#888;
+h3 {
+  font-size:14px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#aaa;
 }
 
-.good {
-  color:#111;
-}
+.bad { color:#9ca3af; }
+.good { color:#fff; }
 
-/* BUTTON */
+/* BUTTONS */
 button {
-  margin-top:20px;
-  padding:14px 22px;
+  margin-top:14px;
+  padding:14px 20px;
   border:none;
-  border-radius:10px;
-  background:#ff4d1a;
+  border-radius:12px;
+  background: linear-gradient(135deg,#ff4d1a,#ff7a45);
   color:white;
   cursor:pointer;
   font-weight:600;
+  transition:0.2s ease;
 }
 
 button:hover {
-  background:#e63e0f;
+  transform: translateY(-2px);
+  box-shadow:0 20px 40px rgba(255,77,26,0.25);
 }
 
-/* OUTPUT */
+/* TEXTAREA */
 textarea {
   width:100%;
   height:160px;
-  margin-top:20px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  padding:10px;
+  margin-top:18px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.15);
+  padding:12px;
+  font-family:inherit;
+  background: rgba(0,0,0,0.2);
+  color:#fff;
 }
 
-/* SOCIAL PROOF */
+/* PROOF */
 .proof {
   display:flex;
   justify-content:center;
   gap:40px;
-  margin-top:60px;
-  color:#666;
-  font-size:14px;
+  margin-top:70px;
+  font-size:13px;
+  color:#9ca3af;
 }
+
+.proof div {
+  padding:10px 16px;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:999px;
+  background: rgba(255,255,255,0.03);
+}
+
+/* FLOAT ANIMATION */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0px); }
+}
+
+.card {
+  animation: float 6s ease-in-out infinite;
+}
+
 </style>
 </head>
 
 <body>
+
+<div class="bg"></div>
 
 <div class="hero">
 
@@ -149,31 +203,29 @@ textarea {
   </h1>
 
   <p class="sub">
-    The first tool that transfers your ChatGPT memory into Claude.
+    Transfer your ChatGPT memory into Claude instantly.
   </p>
 
   <p class="mini">
-    Upload → Rebuild → Continue your AI life without reset
+    Upload → Rebuild → Continue without context loss
   </p>
 
   <div class="card">
 
     <div class="drop" onclick="fileInput.click()">
       Drop <b>conversations.json</b><br>
-      <small>or click to upload</small>
+      <small style="color:#aaa">or click to upload</small>
     </div>
 
     <input type="file" id="fileInput" hidden>
 
-    <p style="font-size:12px;color:#999;margin-top:10px">
+    <p style="font-size:12px;color:#888;margin-top:10px">
       Runs locally. No upload. No backend.
     </p>
 
     <textarea id="output" placeholder="Generated Claude prompt..."></textarea>
 
     <button onclick="openClaude()">Open in Claude</button>
-    <button onclick="generateIdentity()">Generate AI Identity</button>
-    <button onclick="downloadPNG()">Download Identity</button>
     <button onclick="share()">Share</button>
 
   </div>
@@ -182,14 +234,14 @@ textarea {
   <div class="split">
 
     <div class="box">
-      <h3>❌ Before</h3>
+      <h3>Before</h3>
       <p class="bad">“Hi! How can I help you today?”</p>
     </div>
 
     <div class="box">
-      <h3>✅ After</h3>
+      <h3>After</h3>
       <p class="good">
-        “I see you’re a systems engineer who prefers direct answers.
+        “I see you're a systems engineer who prefers direct answers.
         Let’s continue where you left off.”
       </p>
     </div>
@@ -198,18 +250,15 @@ textarea {
 
   <div class="proof">
     <div>⚡ 60s migration</div>
-    <div>🔒 Fully local</div>
+    <div>🔒 Local processing</div>
     <div>🧠 Memory reconstruction</div>
   </div>
 
 </div>
 
-<canvas id="canvas" width="800" height="400" style="display:none;"></canvas>
-
 <script>
 
 let promptText = "";
-let identity = { title:"", style:"", points:[] };
 
 fileInput.onchange = async function(e) {
   const file = e.target.files[0];
@@ -230,7 +279,7 @@ fileInput.onchange = async function(e) {
     }
   }
 
-  let sample = messages.slice(0,20).join("\n");
+  let sample = messages.slice(0,25).join("\n");
 
   promptText = `
 You are Claude.
@@ -241,8 +290,8 @@ Context:
 ${sample}
 
 Rules:
-- Be direct
 - Be structured
+- Be direct
 - No fluff
 - Remember preferences
 `;
@@ -254,62 +303,16 @@ function openClaude() {
   window.open("https://claude.ai/new?q=" + encodeURIComponent(promptText), "_blank");
 }
 
-/* IDENTITY */
-function generateIdentity() {
-  const text = document.getElementById("output").value;
-  if (!text) return;
-
-  let lines = text.split("\n").filter(Boolean);
-
-  identity.title = "AI Profile";
-  identity.style = lines.slice(0,3).join(" ");
-  identity.points = lines.slice(3,8);
-
-  draw();
-}
-
-function draw() {
-  const c = document.getElementById("canvas");
-  const ctx = c.getContext("2d");
-
-  ctx.fillStyle="#fff";
-  ctx.fillRect(0,0,800,400);
-
-  ctx.fillStyle="#111";
-  ctx.font="22px Arial";
-  ctx.fillText("AI Identity",40,60);
-
-  ctx.font="14px Arial";
-  ctx.fillText(identity.title,40,100);
-
-  ctx.fillText("Style:",40,150);
-  ctx.fillText(identity.style.slice(0,90),40,180);
-
-  let y=240;
-  identity.points.forEach(p=>{
-    ctx.fillText("- "+p.slice(0,90),40,y);
-    y+=25;
-  });
-}
-
-function downloadPNG(){
-  const c=document.getElementById("canvas");
-  const a=document.createElement("a");
-  a.download="identity.png";
-  a.href=c.toDataURL();
-  a.click();
-}
-
-function share(){
+function share() {
   const text = encodeURIComponent(
 `I migrated my ChatGPT memory into Claude in 60 seconds.
 
-It actually works.
+Feels like a new brain.
 
 Try it: your-link-here`
   );
 
-  window.open("https://twitter.com/intent/tweet?text="+text,"_blank");
+  window.open("https://twitter.com/intent/tweet?text=" + text, "_blank");
 }
 
 </script>
